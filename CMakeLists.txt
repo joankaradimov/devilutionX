@@ -427,6 +427,10 @@ if(EMSCRIPTEN)
     -sALLOW_MEMORY_GROWTH=1
     -sASYNCIFY
     -lidbfs.js
+    # The only reference to IDBFS is in emscripten_pre.js, which the linker
+    # cannot see, so without this it is dropped as unused and the saves
+    # directory never gets mounted.
+    "SHELL:-sDEFAULT_LIBRARY_FUNCS_TO_INCLUDE=$IDBFS"
     --shell-file ${CMAKE_CURRENT_SOURCE_DIR}/Packaging/emscripten/index.html
   )
 
