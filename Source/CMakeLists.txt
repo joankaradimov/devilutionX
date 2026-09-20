@@ -5,6 +5,7 @@ include(functions/genex)
 set(libdevilutionx_SRCS
   appfat.cpp
   automap.cpp
+  autostart.cpp
   capture.cpp
   cursor.cpp
   dead.cpp

@@ -7,6 +7,7 @@
 
 #include <sol/sol.hpp>
 
+#include "autostart.h"
 #include "debug.h"
 #include "interfac.h"
 #include "levels/setmaps.h"

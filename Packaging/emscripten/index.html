@@ -323,7 +323,37 @@
 		var progressElement = document.getElementById('progress');
 		var spinnerElement = document.getElementById('spinner');
 
+		// The game picks its start-up choices off the command line, so the
+		// query string is passed through: ?game-mode=single&load-save=2 runs
+		// it as --game-mode single --load-save 2. See --help for the full set.
+		var GAME_FLAGS = [
+			'game-mode', 'connection', 'load-save', 'difficulty',
+			'dun', 'dun-type', 'dun-pos', 'dun-pal'
+		];
+
+		// Used when the query string names none of the flags above. Change
+		// these to pick the character this page drops you into.
+		var DEFAULT_FLAGS = ['--game-mode', 'multi', '--load-save', '0'];
+
+		function gameArguments() {
+			var query = new URLSearchParams(location.search);
+			// ?menu leaves the title screen and the menus alone.
+			if (query.has('menu')) return [];
+
+			// -n skips the logo, the intro movie and the title screen.
+			var args = ['-n'];
+			GAME_FLAGS.forEach(function (flag) {
+				var value = query.get(flag);
+				if (value !== null) args.push('--' + flag, value);
+			});
+			if (args.length === 1) args = args.concat(DEFAULT_FLAGS);
+
+			console.log('devilutionx ' + args.join(' '));
+			return args;
+		}
+
 		var Module = {
+			arguments: gameArguments(),
 			preRun: [],
 			postRun: [],
 			print: (function () {
@@ -388,6 +418,7 @@
 				if (text) Module.printErr('[post-exception status] ' + text);
 			};
 		};
+
 	</script>
 	<script type='text/javascript' src="file-manager.js"></script>
 	<script async type="text/javascript" src="devilutionx.js"></script>

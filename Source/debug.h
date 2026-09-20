@@ -17,7 +17,6 @@
 
 namespace devilution {
 
-extern std::string TestMapPath;
 extern OptionalOwnedClxSpriteList pSquareCel;
 extern bool DebugToggle;
 extern bool DebugGodMode;

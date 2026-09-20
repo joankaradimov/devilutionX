@@ -27,9 +27,7 @@
 #include "utils/is_of.hpp"
 #include "utils/language.h"
 
-#ifdef _DEBUG
-#include "debug.h"
-#endif
+#include "autostart.h"
 
 namespace devilution {
 
@@ -304,10 +302,8 @@ int GetMapReturnLevel()
 
 Point GetMapReturnPosition()
 {
-#ifdef _DEBUG
 	if (!TestMapPath.empty())
 		return ViewPosition;
-#endif
 
 	switch (setlvlnum) {
 	case SL_SKELKING:

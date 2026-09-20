@@ -22,6 +22,7 @@
 #include <config.h>
 
 #include "DiabloUI/diabloui.h"
+#include "autostart.h"
 #include "diablo.h"
 #include "engine/demomode.h"
 #include "engine/point.hpp"
@@ -516,6 +517,21 @@ void UnregisterNetEventHandlers()
 	}
 }
 
+/**
+ * @brief Creates the game the command line asked for, in place of the
+ * create/join, difficulty and speed dialogs.
+ */
+bool AutostartCreateGame(GameData *gameData, int *playerId)
+{
+	// Everything else was filled in by InitGameInfo; difficulty is normally
+	// picked in the create game dialog we are standing in for.
+	gameData->nDifficulty = Autostart.difficulty.value_or(DIFF_NORMAL);
+
+	GameData gameInitInfo = *gameData;
+	SwapGameDataLE(gameInitInfo);
+	return SNetCreateGame(nullptr, nullptr, reinterpret_cast<char *>(&gameInitInfo), sizeof(gameInitInfo), playerId);
+}
+
 bool InitSingle(GameData *gameData)
 {
 	Players.resize(1);
@@ -548,11 +564,26 @@ bool InitMulti(GameData *gameData)
 	int playerId;
 
 	while (true) {
-		if (gbSelectProvider && !UiSelectProvider(gameData)) {
-			return false;
+		if (gbSelectProvider) {
+			if (AutostartPending()) {
+				if (!SNetInitializeProvider(Autostart.provider.value_or(SELCONN_LOOPBACK), gameData)) {
+					// Give up rather than loop back and try the same thing again.
+					AutostartDone();
+					return false;
+				}
+			} else if (!UiSelectProvider(gameData)) {
+				return false;
+			}
 		}
 
 		RegisterNetEventHandlers();
+		if (AutostartPending()) {
+			if (!AutostartCreateGame(gameData, &playerId)) {
+				AutostartDone();
+				return false;
+			}
+			break;
+		}
 		if (UiSelectGame(gameData, &playerId))
 			break;
 

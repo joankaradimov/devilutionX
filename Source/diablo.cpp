@@ -24,6 +24,7 @@
 #include "DiabloUI/selstart.h"
 #include "appfat.h"
 #include "automap.h"
+#include "autostart.h"
 #include "capture.h"
 #include "control/control.hpp"
 #include "cursor.h"
@@ -887,6 +888,10 @@ void RunGameLoop(interface_mode uMsg)
 
 	discord_manager::StartGame();
 	lua::GameStart();
+
+	// A game has been entered, so leaving it must bring up the real main menu
+	// rather than starting the command line's game over again.
+	AutostartDone();
 #ifdef GPERF_HEAP_FIRST_GAME_ITERATION
 	unsigned run_game_iteration = 0;
 #endif
@@ -1038,6 +1043,14 @@ extern "C" void SdlLogToFile(void *userdata, int /*category*/, SDL_LogPriority p
 	PrintHelpOption("--spawn", _(/* TRANSLATORS: Commandline Option */ "Force Shareware mode"));
 	PrintHelpOption("--diablo", _(/* TRANSLATORS: Commandline Option */ "Force Diablo mode"));
 	PrintHelpOption("--hellfire", _(/* TRANSLATORS: Commandline Option */ "Force Hellfire mode"));
+	PrintHelpOption("--game-mode <mode>", _(/* TRANSLATORS: Commandline Option */ "Enter a game directly: single or multi"));
+	PrintHelpOption("--connection <name>", _(/* TRANSLATORS: Commandline Option */ "Multiplayer provider: offline, tcp or zerotier"));
+	PrintHelpOption("--load-save <#>", _(/* TRANSLATORS: Commandline Option */ "Save slot to enter the game with"));
+	PrintHelpOption("--difficulty <name>", _(/* TRANSLATORS: Commandline Option */ "Difficulty: normal, nightmare or hell"));
+	PrintHelpOption("--dun <path>", _(/* TRANSLATORS: Commandline Option */ "Enter the level in <path>.dun instead of a generated one"));
+	PrintHelpOption("--dun-type <name>", _(/* TRANSLATORS: Commandline Option */ "Tileset for --dun, e.g. cathedral"));
+	PrintHelpOption("--dun-pos <x,y>", _(/* TRANSLATORS: Commandline Option */ "Where to stand in the --dun level"));
+	PrintHelpOption("--dun-pal <#>", _(/* TRANSLATORS: Commandline Option */ "Palette variant for --dun, instead of a random one"));
 	printInConsole(_(/* TRANSLATORS: Commandline Option */ "Hellfire options:"));
 	printNewlineInConsole();
 #ifdef _DEBUG
@@ -1155,6 +1168,77 @@ void DiabloParseFlags(int argc, char **argv)
 			forceDiablo = true;
 		} else if (arg == "--hellfire") {
 			forceHellfire = true;
+		} else if (arg == "--game-mode") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--game-mode");
+				diablo_quit(64);
+			}
+			if (!AutostartSetGameMode(argv[++i])) {
+				PrintFlagMessage("--game-mode", " must be single or multi");
+				diablo_quit(64);
+			}
+		} else if (arg == "--connection") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--connection");
+				diablo_quit(64);
+			}
+			if (!AutostartSetConnection(argv[++i])) {
+				PrintFlagMessage("--connection", " must be offline, tcp or zerotier");
+				diablo_quit(64);
+			}
+		} else if (arg == "--load-save") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--load-save");
+				diablo_quit(64);
+			}
+			ParseIntResult<uint32_t> parsedParam = ParseInt<uint32_t>(argv[++i], 0, static_cast<uint32_t>(MAX_CHARACTERS - 1));
+			if (!parsedParam.has_value()) {
+				PrintFlagMessage("--load-save", " must be a save slot number");
+				diablo_quit(64);
+			}
+			Autostart.saveNumber = parsedParam.value();
+		} else if (arg == "--difficulty") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--difficulty");
+				diablo_quit(64);
+			}
+			if (!AutostartSetDifficulty(argv[++i])) {
+				PrintFlagMessage("--difficulty", " must be normal, nightmare or hell");
+				diablo_quit(64);
+			}
+		} else if (arg == "--dun") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--dun");
+				diablo_quit(64);
+			}
+			Autostart.dunPath = argv[++i];
+		} else if (arg == "--dun-type") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--dun-type");
+				diablo_quit(64);
+			}
+			if (!AutostartSetDunType(argv[++i])) {
+				PrintFlagMessage("--dun-type", " must be a tileset name or number");
+				diablo_quit(64);
+			}
+		} else if (arg == "--dun-pal") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--dun-pal");
+				diablo_quit(64);
+			}
+			if (!AutostartSetDunPal(argv[++i])) {
+				PrintFlagMessage("--dun-pal", " must be a palette number from 1 to 99");
+				diablo_quit(64);
+			}
+		} else if (arg == "--dun-pos") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--dun-pos");
+				diablo_quit(64);
+			}
+			if (!AutostartSetDunSpawn(argv[++i])) {
+				PrintFlagMessage("--dun-pos", " must be x,y inside the dungeon");
+				diablo_quit(64);
+			}
 		} else if (arg == "--vanilla") {
 			gbVanilla = true;
 		} else if (arg == "--verbose") {
