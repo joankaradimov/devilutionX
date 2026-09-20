@@ -199,7 +199,7 @@ void LoadPaletteAndInitBlending(const char *path)
 	}
 }
 
-void LoadRndLvlPal(dungeon_type l)
+void LoadRndLvlPal(dungeon_type l, std::optional<int> variant)
 {
 	if (HeadlessMode)
 		return;
@@ -214,10 +214,12 @@ void LoadRndLvlPal(dungeon_type l)
 		return;
 	}
 
-	int rv = RandomIntBetween(1, 4);
-	char szFileName[27];
+	const bool pinned = variant.has_value();
+	int rv = pinned ? *variant : RandomIntBetween(1, 4);
+	char szFileName[32];
 	if (l == DTYPE_NEST) {
-		if (!*GetOptions().Graphics.alternateNestArt) {
+		// A pinned variant names the file outright, so it is not shifted.
+		if (!pinned && !*GetOptions().Graphics.alternateNestArt) {
 			rv++;
 		}
 		*BufCopy(szFileName, R"(nlevels\l6data\l6base)", rv, ".pal") = '\0';

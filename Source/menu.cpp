@@ -16,6 +16,7 @@
 #include "DiabloUI/diabloui.h"
 #include "DiabloUI/selok.h"
 #include "DiabloUI/settingsmenu.h"
+#include "autostart.h"
 #include "engine/assets.hpp"
 #include "engine/demomode.h"
 #include "game_mode.hpp"
@@ -106,6 +107,43 @@ bool DummyGetHeroInfo(_uiheroinfo * /*pInfo*/)
 	return true;
 }
 
+/**
+ * @brief Takes the hero from the command line instead of asking for one.
+ * @return false if the slot asked for holds no character, in which case the
+ *         dialog is shown as usual so one can be picked or created.
+ */
+bool AutostartSelectHero(GameData *gameData)
+{
+	if (!AutostartPending())
+		return false;
+
+	uint32_t saveNumber;
+	if (Autostart.saveNumber) {
+		saveNumber = *Autostart.saveNumber;
+	} else {
+		// Nothing was asked for, so carry on with whoever played last.
+		OptionEntryInt<uint32_t> *lastHero;
+		if (gbIsMultiplayer)
+			lastHero = gbIsHellfire ? &GetOptions().Hellfire.lastMultiplayerHero : &GetOptions().Diablo.lastMultiplayerHero;
+		else
+			lastHero = gbIsHellfire ? &GetOptions().Hellfire.lastSinglePlayerHero : &GetOptions().Diablo.lastSinglePlayerHero;
+		saveNumber = **lastHero;
+	}
+
+	// Entering an empty slot is fatal further down, in pfile_read_player_from_save.
+	if (!OpenSaveArchive(saveNumber))
+		return false;
+
+	gSaveNumber = saveNumber;
+	pfile_ui_set_hero_infos(DummyGetHeroInfo);
+	if (!gbIsMultiplayer) {
+		gbLoadGame = true;
+		gameData->nDifficulty = Autostart.difficulty.value_or(DIFF_NORMAL);
+	}
+
+	return true;
+}
+
 } // namespace
 
 bool mainmenu_select_hero_dialog(GameData *gameData)
@@ -115,6 +153,8 @@ bool mainmenu_select_hero_dialog(GameData *gameData)
 	if (demo::IsRunning()) {
 		pfile_ui_set_hero_infos(DummyGetHeroInfo);
 		gbLoadGame = true;
+	} else if (AutostartSelectHero(gameData)) {
+		return true;
 	} else if (!gbIsMultiplayer) {
 		pSaveNumberFromOptions = gbIsHellfire ? &GetOptions().Hellfire.lastSinglePlayerHero : &GetOptions().Diablo.lastSinglePlayerHero;
 		gSaveNumber = **pSaveNumberFromOptions;
@@ -167,6 +207,8 @@ void mainmenu_loop()
 		_mainmenu_selections menu = MAINMENU_NONE;
 		if (demo::IsRunning())
 			menu = MAINMENU_SINGLE_PLAYER;
+		else if (AutostartPending())
+			menu = *Autostart.multiplayer ? MAINMENU_MULTIPLAYER : MAINMENU_SINGLE_PLAYER;
 		else if (!UiMainMenuDialog(gszProductName, &menu, 30))
 			app_fatal(_("Unable to display mainmenu"));
 

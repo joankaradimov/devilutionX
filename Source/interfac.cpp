@@ -21,6 +21,7 @@
 #include <SDL.h>
 #endif
 
+#include "autostart.h"
 #include "control/control.hpp"
 #include "controls/input.h"
 #include "engine/clx_sprite.hpp"
@@ -466,6 +467,12 @@ void DoLoad(interface_mode uMsg)
 		loadResult = std::unexpected<std::string>("Unknown progress mode");
 		break;
 	}
+
+	// A level named on the command line replaces the one the game just loaded,
+	// from within this same load screen, so that the level the character
+	// starts in is never shown.
+	if (loadResult.has_value() && AutostartDunPending())
+		loadResult = AutostartEnterDun();
 
 	if (!loadResult.has_value()) {
 		SDL_Event event;

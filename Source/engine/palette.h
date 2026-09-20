@@ -7,6 +7,7 @@
 
 #include <array>
 #include <cstdint>
+#include <optional>
 #include <span>
 
 #ifdef USE_SDL3
@@ -90,7 +91,13 @@ void LoadPaletteAndInitBlending(const char *path);
  */
 void SetLogicalPaletteColor(unsigned colorIndex, const SDL_Color &color);
 
-void LoadRndLvlPal(dungeon_type l);
+/**
+ * @brief Loads a palette for the given level type.
+ * @param l the level type, which picks the palette family
+ * @param variant which palette of the family to use, or nullopt to pick at
+ *        random. Ignored for town and crypt, which have only one palette.
+ */
+void LoadRndLvlPal(dungeon_type l, std::optional<int> variant = std::nullopt);
 void IncreaseBrightness();
 
 /**

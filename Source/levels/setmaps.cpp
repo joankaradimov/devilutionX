@@ -3,9 +3,7 @@
 #include <cstdint>
 #include <expected>
 
-#ifdef _DEBUG
-#include "debug.h"
-#endif
+#include "autostart.h"
 #include "engine/load_file.hpp"
 #include "engine/palette.h"
 #include "levels/drlg_l1.h"
@@ -93,7 +91,7 @@ std::expected<void, std::string> LoadCustomMap(const char *path, Point viewPosit
 	case DTYPE_NONE:
 		break;
 	}
-	LoadRndLvlPal(setlvltype);
+	LoadRndLvlPal(setlvltype, Autostart.dunPal);
 	return {};
 }
 
@@ -165,10 +163,10 @@ std::expected<void, std::string> LoadSetMap()
 		RETURN_IF_ERROR(LoadArenaMap("arena\\circle_of_death.dun", { 30, 26 }, { 29, 26 }));
 		break;
 	case SL_NONE:
-#ifdef _DEBUG
-		RETURN_IF_ERROR(LoadCustomMap(TestMapPath.c_str(), ViewPosition));
-		InitNoTriggers();
-#endif
+		if (!TestMapPath.empty()) {
+			RETURN_IF_ERROR(LoadCustomMap(TestMapPath.c_str(), ViewPosition));
+			InitNoTriggers();
+		}
 		break;
 	}
 	return {};
