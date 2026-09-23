@@ -40,6 +40,7 @@ jobs:
         mkdir dist
         cp build-em/index.html build-em/file-manager.js \
           build-em/devilutionx.js build-em/devilutionx.wasm build-em/devilutionx.data dist/
+        cp Packaging/emscripten/.htaccess dist/
         # -R keeps the server's timestamp so rsync skips re-uploading an unchanged file
         curl -fsSLR -o dist/spawn.mpq \
           https://github.com/diasurgical/devilutionx-assets/releases/latest/download/spawn.mpq
