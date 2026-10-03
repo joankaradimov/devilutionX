@@ -113,6 +113,7 @@ option(WIN_NSIS "Generate an NSIS installer" OFF)
 # Network options
 cmake_dependent_option(DISABLE_TCP "Disable TCP multiplayer option" OFF "NOT NONET" ON)
 cmake_dependent_option(DISABLE_ZERO_TIER "Disable ZeroTier multiplayer option" OFF "NOT NONET" ON)
+cmake_dependent_option(DISABLE_WEBRTC "Disable WebRTC multiplayer option" OFF "NOT NONET" ON)
 
 if(USE_SDL1 AND USE_SDL3)
   message(FATAL_ERROR "USE_SDL1 and USE_SDL3 cannot be set at the same time")
@@ -156,7 +157,7 @@ set_property(CACHE DEVILUTIONX_DEFAULT_RESAMPLER PROPERTY STRINGS ${_resamplers}
 option(DISABLE_LTO "Disable link-time optimization (by default enabled in release mode)" OFF)
 option(PIE "Generate position-independent code" OFF)
 cmake_dependent_option(DEVILUTIONX_DISABLE_RTTI "Disable RTTI" ON "NONET" OFF)
-cmake_dependent_option(DEVILUTIONX_DISABLE_EXCEPTIONS "Disable exceptions" ON "DISABLE_ZERO_TIER" OFF)
+cmake_dependent_option(DEVILUTIONX_DISABLE_EXCEPTIONS "Disable exceptions" ON "DISABLE_ZERO_TIER;DISABLE_WEBRTC" OFF)
 RELEASE_OPTION(DEVILUTIONX_STATIC_CXX_STDLIB "Link C++ standard library statically (if available)")
 option(DEVILUTIONX_PROFILE_GENERATE "Build a binary that generates the profile for PGO" OFF)
 option(DEVILUTIONX_PROFILE_USE "Build with PGO using the given profile file" OFF)

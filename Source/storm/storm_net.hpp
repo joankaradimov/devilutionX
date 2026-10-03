@@ -16,6 +16,7 @@ enum conn_type : uint8_t {
 	SELCONN_ZT,
 	SELCONN_TCP,
 	SELCONN_LOOPBACK,
+	SELCONN_WEBRTC,
 };
 
 enum event_type : uint8_t {

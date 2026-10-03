@@ -1003,6 +1003,10 @@ if(NOT NONET)
       dvlnet/zerotier_native.cpp
       dvlnet/zerotier_lwip.cpp)
   endif()
+  if(NOT DISABLE_WEBRTC)
+    list(APPEND libdevilutionx_SRCS
+      dvlnet/protocol_webrtc.cpp)
+  endif()
 endif()
 
 if(NOT USE_SDL1)
@@ -1179,6 +1183,10 @@ if(NOT NONET AND NOT DISABLE_ZERO_TIER)
   else()
     target_link_libraries(libdevilutionx PUBLIC zt-shared)
   endif()
+endif()
+
+if(NOT NONET AND NOT DISABLE_WEBRTC)
+  target_link_libraries(libdevilutionx PUBLIC snps::core)
 endif()
 
 foreach(path ${DEVILUTIONX_PLATFORM_SUBDIRECTORIES})

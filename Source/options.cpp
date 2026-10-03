@@ -233,6 +233,7 @@ void LoadOptions()
 	ini->getUtf8Buf("Network", "Bind Address", "0.0.0.0", options.Network.szBindAddress, sizeof(options.Network.szBindAddress));
 	ini->getUtf8Buf("Network", "Previous Game ID", options.Network.szPreviousZTGame, sizeof(options.Network.szPreviousZTGame));
 	ini->getUtf8Buf("Network", "Previous Host", options.Network.szPreviousHost, sizeof(options.Network.szPreviousHost));
+	ini->getUtf8Buf("Network", "WebRTC Server", "ws://127.0.0.1:8765", options.Network.szWebRTCServer, sizeof(options.Network.szWebRTCServer));
 
 	for (size_t i = 0; i < QuickMessages.size(); i++) {
 		const std::span<const Ini::Value> values = ini->get("NetMsg", QuickMessages[i].key);
@@ -265,6 +266,7 @@ void SaveOptions()
 	ini->set("Network", "Bind Address", options.Network.szBindAddress);
 	ini->set("Network", "Previous Game ID", options.Network.szPreviousZTGame);
 	ini->set("Network", "Previous Host", options.Network.szPreviousHost);
+	ini->set("Network", "WebRTC Server", options.Network.szWebRTCServer);
 
 	for (size_t i = 0; i < QuickMessages.size(); i++) {
 		ini->set("NetMsg", QuickMessages[i].key, options.Chat.szHotKeyMsgs[i]);

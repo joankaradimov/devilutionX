@@ -86,7 +86,7 @@ std::expected<void, std::string> AutostartEnterDun();
 bool AutostartSetGameMode(std::string_view value);
 
 /**
- * @brief Parses a --connection value ("offline", "tcp" or "zerotier").
+ * @brief Parses a --connection value ("offline", "tcp", "zerotier" or "webrtc").
  * @return false if the value names no known provider.
  */
 bool AutostartSetConnection(std::string_view value);

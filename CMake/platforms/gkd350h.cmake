@@ -1,5 +1,6 @@
 set(BUILD_ASSETS_MPQ OFF)
 set(DISABLE_ZERO_TIER ON)
+set(DISABLE_WEBRTC ON)
 set(USE_SDL1 ON)
 
 # Do not warn about unknown attributes, such as [[nodiscard]].

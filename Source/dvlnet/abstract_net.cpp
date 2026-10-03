@@ -14,6 +14,11 @@
 #ifndef DISABLE_TCP
 #include "dvlnet/tcp_client.h"
 #endif
+
+#ifndef DISABLE_WEBRTC
+#include "dvlnet/base_protocol.h"
+#include "dvlnet/protocol_webrtc.h"
+#endif
 #endif
 
 namespace devilution::net {
@@ -34,6 +39,12 @@ std::unique_ptr<abstract_net> abstract_net::MakeNet(provider_t provider)
 	case SELCONN_ZT:
 		return std::make_unique<cdwrap>([]() {
 			return std::make_unique<base_protocol<protocol_zt>>();
+		});
+#endif
+#ifndef DISABLE_WEBRTC
+	case SELCONN_WEBRTC:
+		return std::make_unique<cdwrap>([]() {
+			return std::make_unique<base_protocol<protocol_webrtc>>();
 		});
 #endif
 	case SELCONN_LOOPBACK:
