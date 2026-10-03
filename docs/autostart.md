@@ -35,7 +35,7 @@ devilutionx --game-mode multi --connection webrtc
 devilutionx --game-mode multi --connection webrtc --join abcde
 ```
 
-`--connection` only has providers to choose from where the build has them. Emscripten sets `DISABLE_TCP`, `DISABLE_ZERO_TIER` and, for now, `DISABLE_WEBRTC`, so `offline` is the only one there.
+`--connection` only has providers to choose from where the build has them. Emscripten sets `DISABLE_TCP` and `DISABLE_ZERO_TIER`, so `offline` and `webrtc` are the ones there.
 
 These choices apply to the first game only. Once it has been entered, leaving to the main menu brings up the real menu, so the parameters cannot trap you in a loop of re-entering the same game.
 

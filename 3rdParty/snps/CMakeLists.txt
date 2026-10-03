@@ -5,6 +5,13 @@ include(functions/FetchContent_ExcludeFromAll_backport)
 set(SNP_BUILD_PROVIDERS OFF)
 set(SNP_BUILD_TESTS OFF)
 
+# The web build uses pthreads (SDL2 is built with USE_PTHREADS=1), and a
+# shared-memory module can only link objects that were compiled for one.
+if(EMSCRIPTEN)
+  string(APPEND CMAKE_C_FLAGS " -pthread")
+  string(APPEND CMAKE_CXX_FLAGS " -pthread")
+endif()
+
 # TODO: Pin to a commit. Nothing has been pushed yet, so for now configure with
 # -DFETCHCONTENT_SOURCE_DIR_SNPS=<path to a local checkout>.
 include(FetchContent)
