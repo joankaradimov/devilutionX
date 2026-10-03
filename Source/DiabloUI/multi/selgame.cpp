@@ -62,6 +62,14 @@ namespace {
 
 const char *title = "";
 
+/**
+ * @brief Whether games are joined by Game ID and listed publicly, rather than joined by address.
+ */
+bool UsesGameIds()
+{
+	return provider == SELCONN_ZT || provider == SELCONN_WEBRTC;
+}
+
 std::vector<std::unique_ptr<UiListItem>> vecSelGameDlgItems;
 std::vector<std::unique_ptr<UiItemBase>> vecSelGameDialog;
 std::vector<GameInfo> Gamelist;
@@ -119,7 +127,7 @@ void UiInitGameSelectionList(std::string_view search)
 		return;
 	}
 
-	if (provider == SELCONN_ZT) {
+	if (UsesGameIds()) {
 		CopyUtf8(selgame_Ip, GetOptions().Network.szPreviousZTGame, sizeof(selgame_Ip));
 	} else {
 		CopyUtf8(selgame_Ip, GetOptions().Network.szPreviousHost, sizeof(selgame_Ip));
@@ -155,7 +163,7 @@ void UiInitGameSelectionList(std::string_view search)
 	vecSelGameDlgItems.push_back(std::make_unique<UiListItem>(_("Create Public Game"), 1, UiFlags::ColorUiGold));
 	vecSelGameDlgItems.push_back(std::make_unique<UiListItem>(_("Join Game"), 2, UiFlags::ColorUiGold));
 
-	if (provider == SELCONN_ZT) {
+	if (UsesGameIds()) {
 		vecSelGameDlgItems.push_back(std::make_unique<UiListItem>(std::string_view {}, -1, UiFlags::ElementDisabled));
 		vecSelGameDlgItems.push_back(std::make_unique<UiListItem>(_("Public Games"), -1, UiFlags::ElementDisabled | UiFlags::ColorWhitegold));
 
@@ -223,7 +231,7 @@ void selgame_GameSelection_Focus(size_t value)
 		CopyUtf8(selgame_Description, _("Create a new public game that anyone can join with a difficulty setting of your choice."), sizeof(selgame_Description));
 		break;
 	case 2:
-		if (provider == SELCONN_ZT) {
+		if (UsesGameIds()) {
 			CopyUtf8(selgame_Description, _("Enter Game ID to join a game already in progress."), sizeof(selgame_Description));
 		} else {
 			CopyUtf8(selgame_Description, _("Enter an IP or a hostname to join a game already in progress."), sizeof(selgame_Description));
@@ -359,7 +367,7 @@ void selgame_GameSelection_Select(size_t value)
 		title = selgame_Title.c_str();
 
 		const char *inputHint;
-		if (provider == SELCONN_ZT) {
+		if (UsesGameIds()) {
 			inputHint = _("Enter Game ID").data();
 		} else {
 			inputHint = _("Enter address").data();
@@ -631,7 +639,7 @@ void selgame_Password_Select(size_t /*value*/)
 		bool allowJoin = true;
 		if (selgame_selectedGame > 2)
 			allowJoin = IsGameCompatible(Gamelist[selgame_selectedGame - 3].gameData);
-		if (provider == SELCONN_ZT) {
+		if (UsesGameIds()) {
 			for (unsigned int i = 0; i < (sizeof(selgame_Ip) / sizeof(selgame_Ip[0])); i++) {
 				selgame_Ip[i] = (selgame_Ip[i] >= 'A' && selgame_Ip[i] <= 'Z') ? selgame_Ip[i] + 'a' - 'A' : selgame_Ip[i];
 			}
@@ -745,7 +753,7 @@ bool UiSelectGame(GameData *gameData, int *playerId)
 	while (!selgame_endMenu) {
 		UiClearScreen();
 		UiPollAndRender();
-		if (provider == SELCONN_ZT)
+		if (UsesGameIds())
 			RefreshGameList();
 	}
 	selgame_Free();

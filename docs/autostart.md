@@ -9,7 +9,7 @@ Unlike the `+` debug commands described in [debug.md](debug.md), these are avail
 | Parameter | Description |
 | --------- | ----------- |
 | `--game-mode <mode>` | `single` or `multi`. Skips the main menu. Nothing else here takes effect without it. |
-| `--connection <name>` | `offline`, `tcp` or `zerotier`. Skips the connection dialog. Multiplayer only. Defaults to `offline`. |
+| `--connection <name>` | `offline`, `tcp`, `zerotier` or `webrtc`. Skips the connection dialog. Multiplayer only. Defaults to `offline`. |
 | `--load-save <#>` | Save slot to enter the game with. Skips the character list. Defaults to the character played last. |
 | `--difficulty <name>` | `normal`, `nightmare` or `hell`. Skips the difficulty and game speed lists. Defaults to `normal`. |
 | `--dun <path>` | Enter the level in `<path>.dun` instead of a generated one. |
@@ -27,7 +27,7 @@ devilutionx --game-mode multi --load-save 0
 
 The save slot is the number in the save file name, so `--load-save 0` is `single_0.sv` in single player and `multi_0.sv` in multiplayer, or `spawn_0.sv` and `share_0.sv` in shareware.
 
-`--connection` only has providers to choose from where the build has them. Emscripten sets `DISABLE_TCP` and `DISABLE_ZERO_TIER`, so `offline` is the only one there.
+`--connection` only has providers to choose from where the build has them. Emscripten sets `DISABLE_TCP`, `DISABLE_ZERO_TIER` and, for now, `DISABLE_WEBRTC`, so `offline` is the only one there.
 
 These choices apply to the first game only. Once it has been entered, leaving to the main menu brings up the real menu, so the parameters cannot trap you in a loop of re-entering the same game.
 

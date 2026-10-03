@@ -5,8 +5,9 @@ set(UBSAN OFF)
 # SDL2 does not build for Tiger, so we use SDL1 instead.
 set(USE_SDL1 ON)
 
-# ZeroTier is yet to be tested.
+# ZeroTier and WebRTC are yet to be tested.
 set(DISABLE_ZERO_TIER ON)
+set(DISABLE_WEBRTC ON)
 
 # https://trac.macports.org/ticket/71511
 set(DEVILUTIONX_SYSTEM_GOOGLETEST OFF)

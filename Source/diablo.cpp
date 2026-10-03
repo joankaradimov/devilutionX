@@ -1044,7 +1044,7 @@ extern "C" void SdlLogToFile(void *userdata, int /*category*/, SDL_LogPriority p
 	PrintHelpOption("--diablo", _(/* TRANSLATORS: Commandline Option */ "Force Diablo mode"));
 	PrintHelpOption("--hellfire", _(/* TRANSLATORS: Commandline Option */ "Force Hellfire mode"));
 	PrintHelpOption("--game-mode <mode>", _(/* TRANSLATORS: Commandline Option */ "Enter a game directly: single or multi"));
-	PrintHelpOption("--connection <name>", _(/* TRANSLATORS: Commandline Option */ "Multiplayer provider: offline, tcp or zerotier"));
+	PrintHelpOption("--connection <name>", _(/* TRANSLATORS: Commandline Option */ "Multiplayer provider: offline, tcp, zerotier or webrtc"));
 	PrintHelpOption("--load-save <#>", _(/* TRANSLATORS: Commandline Option */ "Save slot to enter the game with"));
 	PrintHelpOption("--difficulty <name>", _(/* TRANSLATORS: Commandline Option */ "Difficulty: normal, nightmare or hell"));
 	PrintHelpOption("--dun <path>", _(/* TRANSLATORS: Commandline Option */ "Enter the level in <path>.dun instead of a generated one"));
@@ -1183,7 +1183,7 @@ void DiabloParseFlags(int argc, char **argv)
 				diablo_quit(64);
 			}
 			if (!AutostartSetConnection(argv[++i])) {
-				PrintFlagMessage("--connection", " must be offline, tcp or zerotier");
+				PrintFlagMessage("--connection", " must be offline, tcp, zerotier or webrtc");
 				diablo_quit(64);
 			}
 		} else if (arg == "--load-save") {

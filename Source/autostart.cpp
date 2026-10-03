@@ -106,6 +106,8 @@ bool AutostartSetConnection(std::string_view value)
 		Autostart.provider = SELCONN_TCP;
 	} else if (value == "zerotier" || value == "zt") {
 		Autostart.provider = SELCONN_ZT;
+	} else if (value == "webrtc") {
+		Autostart.provider = SELCONN_WEBRTC;
 	} else {
 		return false;
 	}

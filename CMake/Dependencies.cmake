@@ -294,6 +294,10 @@ if(NOT NONET AND NOT DISABLE_ZERO_TIER)
   add_subdirectory(3rdParty/libzt)
 endif()
 
+if(NOT NONET AND NOT DISABLE_WEBRTC)
+  add_subdirectory(3rdParty/snps)
+endif()
+
 if(DISCORD_INTEGRATION)
   add_subdirectory(3rdParty/discord)
 endif()

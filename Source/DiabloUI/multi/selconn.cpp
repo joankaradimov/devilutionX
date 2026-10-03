@@ -29,6 +29,7 @@ const char *ConnectionNames[] {
 	"ZeroTier",
 	N_("Client-Server (TCP)"),
 	N_("Offline"),
+	"WebRTC",
 };
 
 namespace {
@@ -56,6 +57,9 @@ void SelconnLoad()
 #ifndef NONET
 #ifndef DISABLE_ZERO_TIER
 	vecConnItems.push_back(std::make_unique<UiListItem>(std::string_view(ConnectionNames[SELCONN_ZT]), SELCONN_ZT));
+#endif
+#ifndef DISABLE_WEBRTC
+	vecConnItems.push_back(std::make_unique<UiListItem>(std::string_view(ConnectionNames[SELCONN_WEBRTC]), SELCONN_WEBRTC));
 #endif
 #ifndef DISABLE_TCP
 	vecConnItems.push_back(std::make_unique<UiListItem>(_(ConnectionNames[SELCONN_TCP]), SELCONN_TCP));
@@ -127,6 +131,7 @@ void SelconnFocus(size_t value)
 		players = MAX_PLRS;
 		break;
 	case SELCONN_ZT:
+	case SELCONN_WEBRTC:
 		CopyUtf8(selconn_Description, _("All computers must be connected to the internet."), sizeof(selconn_Description));
 		players = MAX_PLRS;
 		break;
