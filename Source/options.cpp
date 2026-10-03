@@ -124,7 +124,7 @@ constexpr OptionEntryFlags OnlyIfSupportsWindowed = OptionEntryFlags::Invisible;
 constexpr OptionEntryFlags OnlyIfSupportsWindowed = OptionEntryFlags::None;
 #endif
 
-constexpr std::string_view DefaultWebRTCServer = "ws://127.0.0.1:8765";
+constexpr std::string_view DefaultWebRTCServer = "wss://joank5.sg-host.com";
 
 constexpr size_t NumResamplers =
 #ifdef DEVILUTIONX_RESAMPLER_SPEEX
