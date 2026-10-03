@@ -5,6 +5,13 @@ include(functions/FetchContent_ExcludeFromAll_backport)
 set(SNP_BUILD_PROVIDERS OFF)
 set(SNP_BUILD_TESTS OFF)
 
+# The web build uses pthreads (SDL2 is built with USE_PTHREADS=1), and a
+# shared-memory module can only link objects that were compiled for one.
+if(EMSCRIPTEN)
+  string(APPEND CMAKE_C_FLAGS " -pthread")
+  string(APPEND CMAKE_CXX_FLAGS " -pthread")
+endif()
+
 include(FetchContent)
 FetchContent_Declare_ExcludeFromAll(snps
   GIT_REPOSITORY https://github.com/joankaradimov/snps.git
