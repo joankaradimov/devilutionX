@@ -10,6 +10,7 @@ Unlike the `+` debug commands described in [debug.md](debug.md), these are avail
 | --------- | ----------- |
 | `--game-mode <mode>` | `single` or `multi`. Skips the main menu. Nothing else here takes effect without it. |
 | `--connection <name>` | `offline`, `tcp`, `zerotier` or `webrtc`. Skips the connection dialog. Multiplayer only. Defaults to `offline`. |
+| `--join <game>` | Join this game instead of creating one: a Game ID for `zerotier` and `webrtc`, the host's address for `tcp`. Multiplayer only, and needs a `--connection` other than `offline`. |
 | `--load-save <#>` | Save slot to enter the game with. Skips the character list. Defaults to the character played last. |
 | `--difficulty <name>` | `normal`, `nightmare` or `hell`. Skips the difficulty and game speed lists. Defaults to `normal`. |
 | `--dun <path>` | Enter the level in `<path>.dun` instead of a generated one. |
@@ -26,6 +27,13 @@ devilutionx --game-mode multi --load-save 0
 ```
 
 The save slot is the number in the save file name, so `--load-save 0` is `single_0.sv` in single player and `multi_0.sv` in multiplayer, or `spawn_0.sv` and `share_0.sv` in shareware.
+
+A multiplayer game is created unless `--join` names one to enter instead. The Game ID of a created game is in the log, so a second instance can follow the first:
+
+```
+devilutionx --game-mode multi --connection webrtc
+devilutionx --game-mode multi --connection webrtc --join abcde
+```
 
 `--connection` only has providers to choose from where the build has them. Emscripten sets `DISABLE_TCP`, `DISABLE_ZERO_TIER` and, for now, `DISABLE_WEBRTC`, so `offline` is the only one there.
 
