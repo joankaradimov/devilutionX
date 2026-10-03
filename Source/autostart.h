@@ -28,6 +28,12 @@ struct AutostartSettings {
 	 * have to pull in the networking headers.
 	 */
 	std::optional<uint8_t> provider;
+	/**
+	 * @brief Game to join instead of creating one, set by --join. Multiplayer only.
+	 *
+	 * A Game ID for ZeroTier and WebRTC, the host's address for TCP.
+	 */
+	std::optional<std::string> joinGame;
 	/** @brief Save slot to enter the game with, set by --load-save. */
 	std::optional<uint32_t> saveNumber;
 	/** @brief Difficulty to create the game with, set by --difficulty. */

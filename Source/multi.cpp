@@ -529,7 +529,22 @@ bool AutostartCreateGame(GameData *gameData, int *playerId)
 
 	GameData gameInitInfo = *gameData;
 	SwapGameDataLE(gameInitInfo);
-	return SNetCreateGame(nullptr, nullptr, reinterpret_cast<char *>(&gameInitInfo), sizeof(gameInitInfo), playerId);
+	if (SNetCreateGame(nullptr, nullptr, reinterpret_cast<char *>(&gameInitInfo), sizeof(gameInitInfo), playerId))
+		return true;
+	LogError("Failed to create a multiplayer game: {}", SDL_GetError());
+	return false;
+}
+
+/**
+ * @brief Joins the game the command line asked for, in place of the join dialog.
+ */
+bool AutostartJoinGame(int *playerId)
+{
+	std::string gameName = *Autostart.joinGame;
+	if (SNetJoinGame(gameName.data(), nullptr, playerId))
+		return true;
+	LogError("Failed to join multiplayer game '{}': {}", gameName, SDL_GetError());
+	return false;
 }
 
 bool InitSingle(GameData *gameData)
@@ -579,7 +594,10 @@ bool InitMulti(GameData *gameData)
 
 		RegisterNetEventHandlers();
 		if (AutostartPending()) {
-			if (!AutostartCreateGame(gameData, &playerId)) {
+			const bool entered = Autostart.joinGame.has_value()
+			    ? AutostartJoinGame(&playerId)
+			    : AutostartCreateGame(gameData, &playerId);
+			if (!entered) {
 				AutostartDone();
 				return false;
 			}

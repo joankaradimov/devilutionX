@@ -1045,6 +1045,7 @@ extern "C" void SdlLogToFile(void *userdata, int /*category*/, SDL_LogPriority p
 	PrintHelpOption("--hellfire", _(/* TRANSLATORS: Commandline Option */ "Force Hellfire mode"));
 	PrintHelpOption("--game-mode <mode>", _(/* TRANSLATORS: Commandline Option */ "Enter a game directly: single or multi"));
 	PrintHelpOption("--connection <name>", _(/* TRANSLATORS: Commandline Option */ "Multiplayer provider: offline, tcp, zerotier or webrtc"));
+	PrintHelpOption("--join <game>", _(/* TRANSLATORS: Commandline Option */ "Game ID or host address to join instead of creating a game"));
 	PrintHelpOption("--load-save <#>", _(/* TRANSLATORS: Commandline Option */ "Save slot to enter the game with"));
 	PrintHelpOption("--difficulty <name>", _(/* TRANSLATORS: Commandline Option */ "Difficulty: normal, nightmare or hell"));
 	PrintHelpOption("--dun <path>", _(/* TRANSLATORS: Commandline Option */ "Enter the level in <path>.dun instead of a generated one"));
@@ -1186,6 +1187,12 @@ void DiabloParseFlags(int argc, char **argv)
 				PrintFlagMessage("--connection", " must be offline, tcp, zerotier or webrtc");
 				diablo_quit(64);
 			}
+		} else if (arg == "--join") {
+			if (i + 1 == argc) {
+				PrintFlagRequiresArgument("--join");
+				diablo_quit(64);
+			}
+			Autostart.joinGame = argv[++i];
 		} else if (arg == "--load-save") {
 			if (i + 1 == argc) {
 				PrintFlagRequiresArgument("--load-save");
@@ -1276,6 +1283,11 @@ void DiabloParseFlags(int argc, char **argv)
 			printNewlineInConsole();
 			PrintHelpAndExit();
 		}
+	}
+
+	if (Autostart.joinGame.has_value() && Autostart.provider.value_or(SELCONN_LOOPBACK) == SELCONN_LOOPBACK) {
+		PrintFlagMessage("--join", " needs --connection tcp, zerotier or webrtc");
+		diablo_quit(64);
 	}
 
 #ifdef _DEBUG
