@@ -566,7 +566,8 @@ bool InitMulti(GameData *gameData)
 	while (true) {
 		if (gbSelectProvider) {
 			if (AutostartPending()) {
-				if (!SNetInitializeProvider(Autostart.provider.value_or(SELCONN_LOOPBACK), gameData)) {
+				provider = Autostart.provider.value_or(SELCONN_LOOPBACK);
+				if (!SNetInitializeProvider(provider, gameData)) {
 					// Give up rather than loop back and try the same thing again.
 					AutostartDone();
 					return false;
