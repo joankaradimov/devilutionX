@@ -20,6 +20,11 @@ namespace devilution::net {
 
 cookie_t packet_out::GenerateCookie()
 {
+	// A public game derives no key, so nothing else may have initialised
+	// libsodium. Natively randombytes_buf() would do that itself; under
+	// Emscripten it needs sodium_init() to find the browser's random source.
+	if (sodium_init() < 0)
+		ABORT();
 	cookie_t cookie;
 	randombytes_buf(reinterpret_cast<unsigned char *>(&cookie),
 	    sizeof(cookie_t));
