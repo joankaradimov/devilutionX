@@ -273,10 +273,13 @@ void selgame_GameSelection_Focus(size_t value)
 				infoString += ' ';
 			}
 			infoString += '\n';
-			if (gameInfo.peerIsRelayed.value_or(false))
-				infoString.append(FormatRuntime(_("Ping: {:d} ms (RELAYED)"), gameInfo.latency.value_or(0)));
-			else
-				infoString.append(FormatRuntime(_("Ping: {:d} ms"), gameInfo.latency.value_or(0)));
+			// A provider that cannot measure latency leaves it empty, which is not 0 ms.
+			if (gameInfo.latency.has_value()) {
+				if (gameInfo.peerIsRelayed.value_or(false))
+					infoString.append(FormatRuntime(_("Ping: {:d} ms (RELAYED)"), *gameInfo.latency));
+				else
+					infoString.append(FormatRuntime(_("Ping: {:d} ms"), *gameInfo.latency));
+			}
 		} else {
 			infoString.append(GetErrorMessageIncompatibility(gameInfo.gameData));
 		}
