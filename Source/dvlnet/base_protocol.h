@@ -93,7 +93,7 @@ plr_t base_protocol<P>::get_master()
 template <class P>
 std::expected<void, PacketError> base_protocol<P>::wait_network()
 {
-	// wait for ZeroTier for 5 seconds
+	// wait for the network for 5 seconds
 	for (auto i = 0; i < 500; ++i) {
 		std::expected<bool, PacketError> status = proto.network_online();
 		if (!status.has_value())
@@ -102,7 +102,7 @@ std::expected<void, PacketError> base_protocol<P>::wait_network()
 			return {};
 		SDL_Delay(10);
 	}
-	return std::unexpected("Timeout waiting for ZeroTier network initialization");
+	return std::unexpected("Timeout waiting for network initialization");
 }
 
 template <class P>
