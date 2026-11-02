@@ -446,6 +446,15 @@ if(EMSCRIPTEN)
   add_dependencies(${BIN_TARGET} hellfire_copied_assets)
   # Add JavaScript to load MPQ files from the server directory at runtime
   target_link_options(${BIN_TARGET} PRIVATE --pre-js ${CMAKE_CURRENT_SOURCE_DIR}/Packaging/emscripten/emscripten_pre.js)
+
+  # Every .dun under Packaging/emscripten/levels goes into the package under
+  # /levels, for the page to enter with ?game-mode=single&dun=/levels/<name>.
+  set(web_levels_dir "${CMAKE_CURRENT_SOURCE_DIR}/Packaging/emscripten/levels")
+  file(GLOB_RECURSE web_levels CONFIGURE_DEPENDS RELATIVE "${web_levels_dir}" "${web_levels_dir}/*.dun")
+  foreach(level IN LISTS web_levels)
+    target_link_options(${BIN_TARGET} PRIVATE "SHELL:--preload-file ${web_levels_dir}/${level}@/levels/${level}")
+    set_property(TARGET ${BIN_TARGET} APPEND PROPERTY LINK_DEPENDS "${web_levels_dir}/${level}")
+  endforeach()
 endif()
 
 if(NOT USE_SDL1 AND NOT UWP_LIB)
