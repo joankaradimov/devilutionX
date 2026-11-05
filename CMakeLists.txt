@@ -357,6 +357,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for clang-tidy
 set(CMAKE_THREAD_PREFER_PTHREAD ON)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+if(EMSCRIPTEN)
+  # Emscripten's libc has pthread stubs, so FindThreads adds no flag. But SDL2
+  # is built with USE_PTHREADS=1, which makes the module shared-memory, and
+  # wasm-ld refuses any object that had atomics stripped for want of -pthread.
+  # The guard of a function-local static is enough to do that.
+  target_compile_options(Threads::Threads INTERFACE -pthread)
+endif()
 
 # Dependencies must be included after Platforms.
 include(Dependencies)
